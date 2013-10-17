@@ -10,3 +10,6 @@ Do a simple iterative search through scalatest reports for a given string and ex
 - `npm install`
 
 (you may need to run `npm install jsdom`)
+
+To run tests, you may need jasmine-node: `sudo npm install jasmine-node -g`
+Then simply run `jasmine-node spec/`

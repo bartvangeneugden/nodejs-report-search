@@ -1,7 +1,6 @@
 var express = require('express');
 var app = express();
 var jsdom = require('jsdom');
-
 var fs = require('fs');
 
 function findContent(search) {
@@ -22,11 +21,6 @@ function inspectFile(contents, err, search) {
 		return "fo";
 	}
 }
-
-app.testAddMe = function(one, two) {
-	return one+two;
-}
-
 
 app.listen(3000);
 console.log('Listening on port 3000');
