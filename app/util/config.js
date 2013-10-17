@@ -1,0 +1,3 @@
+define({
+	path: "~/testresults/"
+})

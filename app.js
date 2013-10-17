@@ -23,12 +23,10 @@ function inspectFile(contents, err, search) {
 	}
 }
 
-app.get('/hello.txt', function(req, res){
-  var body = 'Hello World';
-  res.setHeader('Content-Type', 'text/plain');
-  res.setHeader('Content-Length', body.length);
-  body += findContent("ignoredResultNode");
-  res.end(body);
-});
+app.testAddMe = function(one, two) {
+	return one+two;
+}
+
+
 app.listen(3000);
 console.log('Listening on port 3000');
