@@ -2,8 +2,13 @@ var express = require('express');
 var app = express();
 var jsdom = require('jsdom');
 var Parallel = require('paralleljs');
-
 var fs = require('fs');
+var child_process = require('child_process');
+
+require('nodetime').profile({
+    accountKey: 'e042e1d0246f5073c4325f1b9897582838165a18', 
+    appName: 'Node.js Application'
+  });
 
 function findContent(search) {
 	var result = new Array();
@@ -21,6 +26,15 @@ function inspectFile(contents, err, search) {
 		console.info("found");
 		return "fo";
 	}
+}
+
+function readDir(dirPath) {
+	return fs.readdirSync(dirPath);
+}
+
+function readFile(file) {
+	console.info("file to process " + file);
+	return fs.readFileSync("/Users/tonchen/Downloads/logs/Archive/" + file);
 }
 
 var spawn = function (data) {
@@ -48,6 +62,14 @@ function outoputResult(result) {
 
 function adder(d) { return d[0] + d[1]; }
 
+var Worker = function(param) {
+  var worker = child_process.fork(__dirname + '/sandboxchild.js');
+  if (param) {
+    worker.send(param);   // Send data to a child process.
+  }
+  return worker;
+}
+
 app.get('/hello.txt', function(req, res){
   var body = 'Hello World';
   
@@ -67,6 +89,38 @@ app.get('/hello.txt', function(req, res){
   p = new Parallel([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
   p.require(factorial)
   p.map(function (n) { return Math.pow(10, n) / factorial(n); }).reduce(adder).then(outoputResult);
+  
+  //mapper for file reading
+  var files = readDir("/Users/tonchen/Downloads/logs/Archive/");
+  console.log("files to process: " + files);
+  p = new Parallel(files);
+  p.require(fs.readFileSync);
+  //this doesn't work as web worker has access only to the following
+  //
+  //XMLHttpRequest
+	//Application Cache
+	//create other web workers
+	//navigator object
+	//location object
+	//setTimeout method
+	//clearTimeout method
+	//setInterval method
+	//clearInterval method
+	//importScripts method
+	//JSON
+	//Worker
+  //p.map(readFile).then(outoputResult);
+  
+  
+	var workers = [];
+	workers.push(new Worker(['Hello', 'world']));
+	workers.push(new Worker(['Hello', 'world']));
+	
+	workers.forEach(function(worker) {
+	  worker.on('message', function(msg) {
+	    console.log(msg);
+	  });
+	})
   
   res.setHeader('Content-Type', 'text/plain');
   res.setHeader('Content-Length', body.length);
