@@ -113,8 +113,8 @@ app.get('/hello.txt', function(req, res){
   
   
 	var workers = [];
-	workers.push(new Worker(['Hello', 'world']));
-	workers.push(new Worker(['Hello', 'world']));
+	workers.push(new Worker(files[0]));
+	workers.push(new Worker(files[1]));
 	
 	workers.forEach(function(worker) {
 	  worker.on('message', function(msg) {
