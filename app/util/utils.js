@@ -19,6 +19,8 @@ function objectContains(object, needle) {
 	}
 	return false;
 }
+module.exports.objectContains = objectContains;
+
 //Borrowed from the excellent YUI3 as referenced here http://stackoverflow.com/questions/7390426/better-way-to-get-type-of-a-javascript-variable/7390555#7390555
 var TYPES = {
     'undefined'        : 'undefined',
@@ -36,5 +38,3 @@ TOSTRING = Object.prototype.toString;
 function type(o) {
     return TYPES[typeof o] || TYPES[TOSTRING.call(o)] || (o ? 'object' : 'null');
 };
-
-module.exports.objectContains = objectContains;

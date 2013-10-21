@@ -1,13 +1,6 @@
 var fs = require('fs');
 var cheerio = require('cheerio');
-
-module.exports.fileContains = function(filename, needle) {
-	var contains = false;	
-	fs.readFile(filename, 'utf-8', function(err, contents){
-		if(err) throw err;
-		contains = utils.containsString(contents)
-	});
-}
+var utils = require('./utils');
 module.exports.getScenario = function(htmlHaystack) {
 	var scenarios = [];
 	$=cheerio.load(htmlHaystack);
@@ -23,6 +16,9 @@ module.exports.getScenario = function(htmlHaystack) {
 		scenarios.push(scenario);
 	});
 	return scenarios;
+}
+module.exports.containsKeyword = function(htmlHaystack, needle) {
+	return utils.objectContains(module.exports.getScenario(htmlHaystack), needle);
 }
 
 function trim (str) {
