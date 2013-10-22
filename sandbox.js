@@ -4,6 +4,7 @@ var jsdom = require('jsdom');
 var Parallel = require('paralleljs');
 var fs = require('fs');
 var child_process = require('child_process');
+var async = require('async');
 
 require('nodetime').profile({
     accountKey: 'e042e1d0246f5073c4325f1b9897582838165a18', 
@@ -111,17 +112,33 @@ app.get('/hello.txt', function(req, res){
 	//Worker
   //p.map(readFile).then(outoputResult);
   
-  
+    var result = [];
 	var workers = [];
 	files.forEach(function(entry) {
     	workers.push(new Worker(entry));
 	});
 	
 	workers.forEach(function(worker) {
-	  worker.on('message', function(msg) {
-	    console.log(msg);
+	  worker.on('message', function(msg, search) {
+	    result.push(msg);
+	    //console.info(msg);
 	  });
 	})
+	
+	async.waterfall([
+	    function(callback){
+	        callback(null, 'one', 'two');
+	    },
+	    function(arg1, arg2, callback){
+	        callback(null, 'three');
+	    },
+	    function(arg1, callback){
+	        // arg1 now equals 'three'
+	        callback(null, 'done');
+	    }
+	], function (err, result) {
+	   // result now equals 'done'    
+	});
   
   res.setHeader('Content-Type', 'text/plain');
   res.setHeader('Content-Length', body.length);
