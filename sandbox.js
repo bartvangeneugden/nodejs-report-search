@@ -24,7 +24,7 @@ function findContent(search) {
 
 function inspectFile(contents, err, search) {
 	if (contents.indexOf(search) != -1) {
-		console.info("found");
+		//console.info("found");
 		return "fo";
 	}
 }
@@ -58,16 +58,13 @@ function factorial(n) {
 }
 
 function outoputResult(result) {
-	console.log(result);
+	//console.log(result);
 }
 
 function adder(d) { return d[0] + d[1]; }
 
-var Worker = function(param) {
+var Worker = function() {
   var worker = child_process.fork(__dirname + '/sandboxchild.js');
-  if (param) {
-    worker.send(param);   // Send data to a child process.
-  }
   return worker;
 }
 
@@ -93,7 +90,7 @@ app.get('/hello.txt', function(req, res){
   
   //mapper for file reading
   var files = readDir("/Users/tonchen/Downloads/logs/Archive/");
-  console.log("files to process: " + files);
+  //console.log("files to process: " + files);
   p = new Parallel(files);
   p.require(fs.readFileSync);
   //this doesn't work as web worker has access only to the following
@@ -113,16 +110,37 @@ app.get('/hello.txt', function(req, res){
   //p.map(readFile).then(outoputResult);
   
     var result = [];
-	var workers = [];
-	files.forEach(function(entry) {
-    	workers.push(new Worker(entry));
-	});
-	
-	workers.forEach(function(worker) {
-	  worker.on('message', function(msg, search) {
-	    result.push(msg);
-	    //console.info(msg);
-	  });
+
+	async.waterfall([		
+		function(callback) {
+			var workers = [];
+			var files = readDir("/Users/tonchen/Downloads/logs/Archive/");
+			var numOfWorkers = files.length;
+			var exit = function() {
+		      numOfWorkers--;
+		      if (numOfWorkers == 0) {
+		        callback(null, result);
+		      }
+		    };
+			
+			files.forEach(function(file) {
+				var worker = new Worker();
+				worker.on('exit', exit);
+			  	worker.on('message', function(msg) {
+			   		result.push(msg);
+			  	});
+			  	worker.send(new Array(file, "error"));
+		    	workers.push(worker);
+			});
+		},
+		
+		function(arryList, callback) {
+		    async.reduce(arryList, {}, function(memo, arry, cback) {
+		    cback(null, memo + arry);
+		    }, callback)
+		  },
+	], function(err, result) {
+		  console.log("Result: " + result);
 	})
 	
 	async.waterfall([
