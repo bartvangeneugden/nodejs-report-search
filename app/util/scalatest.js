@@ -7,7 +7,7 @@ module.exports.getScenario = function(htmlHaystack) {
 	$(".specification").each(function(){
 		var scenario = {
 			scope: trim($(this).find('.scope').text()),
-			given: trim($(this).find('.test_passed').text()),
+			given: trim($(this).find('.test_passed,.test_failed dl dt').text()),
 			steps: []
 		};
 		$(this).find('.info dl dt').each(function(){
@@ -17,7 +17,10 @@ module.exports.getScenario = function(htmlHaystack) {
 	});
 	return scenarios;
 }
-module.exports.containsKeyword = function(htmlHaystack, needle) {
+module.exports.scenarioContainsKeyword = function(scenario, needle) {
+	return utils.objectContains(scenario, needle);
+}
+module.exports.htmlContainsKeyword = function(htmlHaystack, needle) {
 	return utils.objectContains(module.exports.getScenario(htmlHaystack), needle);
 }
 

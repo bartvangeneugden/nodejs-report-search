@@ -6,9 +6,14 @@ var ScalaReader = require('../app/util/scalatest.js');
 
 app.get('/scala.json', function(req, response){
 	IOHandler.foreachFileIn("./spec/testresources", function(contents){
-		return ScalaReader.containsKeyword(contents, req.query.q)
+		var scenario = ScalaReader.getScenario(contents);
+		if(ScalaReader.scenarioContains(scenario, contents)){
+			return scenario;
+		}else{
+			return false;
+		}
 	}, function(results){
-		//TODO: Actually get results here
+		console.log(results);
 	}));
 	req.query.q
 });
