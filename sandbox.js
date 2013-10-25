@@ -4,6 +4,7 @@ var jsdom = require('jsdom');
 var Parallel = require('paralleljs');
 var fs = require('fs');
 var child_process = require('child_process');
+var async = require('async');
 
 require('nodetime').profile({
     accountKey: 'e042e1d0246f5073c4325f1b9897582838165a18', 
@@ -23,7 +24,7 @@ function findContent(search) {
 
 function inspectFile(contents, err, search) {
 	if (contents.indexOf(search) != -1) {
-		console.info("found");
+		//console.info("found");
 		return "fo";
 	}
 }
@@ -57,16 +58,13 @@ function factorial(n) {
 }
 
 function outoputResult(result) {
-	console.log(result);
+	//console.log(result);
 }
 
 function adder(d) { return d[0] + d[1]; }
 
-var Worker = function(param) {
+var Worker = function() {
   var worker = child_process.fork(__dirname + '/sandboxchild.js');
-  if (param) {
-    worker.send(param);   // Send data to a child process.
-  }
   return worker;
 }
 
@@ -92,7 +90,7 @@ app.get('/hello.txt', function(req, res){
   
   //mapper for file reading
   var files = readDir("/Users/tonchen/Downloads/logs/Archive/");
-  console.log("files to process: " + files);
+  //console.log("files to process: " + files);
   p = new Parallel(files);
   p.require(fs.readFileSync);
   //this doesn't work as web worker has access only to the following
@@ -111,17 +109,54 @@ app.get('/hello.txt', function(req, res){
 	//Worker
   //p.map(readFile).then(outoputResult);
   
-  
-	var workers = [];
-	files.forEach(function(entry) {
-    	workers.push(new Worker(entry));
-	});
-	
-	workers.forEach(function(worker) {
-	  worker.on('message', function(msg) {
-	    console.log(msg);
-	  });
+    var result = [];
+
+	async.waterfall([		
+		function(callback) {
+			var workers = [];
+			var files = readDir("/Users/tonchen/Downloads/logs/Archive/");
+			var numOfWorkers = files.length;
+			var exit = function() {
+		      numOfWorkers--;
+		      if (numOfWorkers == 0) {
+		        callback(null, result);
+		      }
+		    };
+			
+			files.forEach(function(file) {
+				var worker = new Worker();
+				worker.on('exit', exit);
+			  	worker.on('message', function(msg) {
+			   		result.push(msg);
+			  	});
+			  	worker.send(new Array(file, "error"));
+		    	workers.push(worker);
+			});
+		},
+		
+		function(arryList, callback) {
+		    async.reduce(arryList, {}, function(memo, arry, cback) {
+		    cback(null, memo + arry);
+		    }, callback)
+		  },
+	], function(err, result) {
+		  console.log("Result: " + result);
 	})
+	
+	async.waterfall([
+	    function(callback){
+	        callback(null, 'one', 'two');
+	    },
+	    function(arg1, arg2, callback){
+	        callback(null, 'three');
+	    },
+	    function(arg1, callback){
+	        // arg1 now equals 'three'
+	        callback(null, 'done');
+	    }
+	], function (err, result) {
+	   // result now equals 'done'    
+	});
   
   res.setHeader('Content-Type', 'text/plain');
   res.setHeader('Content-Length', body.length);

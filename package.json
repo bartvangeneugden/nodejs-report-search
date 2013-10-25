@@ -9,6 +9,7 @@
 		"underscore": "1.5.2",
 		"jsdom": "0.8.6",
 		"nodetime": "0.8.14",
-		"cheerio": "0.12.x"
+		"cheerio": "0.12.x",
+		"async": "0.2.9"
 	}
 }
