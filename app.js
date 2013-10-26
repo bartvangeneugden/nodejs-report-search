@@ -6,6 +6,9 @@ var IOHandler = require('./app/util/iohandler.js');
 var ScalaReader = require('./app/util/scalatest.js');
 var child_process = require('child_process');
 var async = require('async');
+var cluster = require('cluster');
+var http = require('http');
+var numCPUs = require('os').cpus().length;
 
 app.get('/scala.json', function(req, response){
 	if (typeof(req.query.q) !== 'undefined' && req.query.q.match(/^[a-z0-9]+$/i)){
@@ -37,7 +40,7 @@ app.get('/scalamr.json', function(req, response) {
 	if (typeof(req.query.q) !== 'undefined' && req.query.q.match(/^[a-z0-9]+$/i)){
 		async.waterfall([		
 			function(callback) {
-				var workerLimit = 8;
+				var workerLimit = require('os').cpus().length;
 				var workers = [];
 				var files = fs.readdirSync("./spec/testresources");
 				var numOfWorkers = files.length>workerLimit?workerLimit:files.length;
