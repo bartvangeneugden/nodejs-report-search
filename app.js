@@ -37,9 +37,10 @@ app.get('/scalamr.json', function(req, response) {
 	if (typeof(req.query.q) !== 'undefined' && req.query.q.match(/^[a-z0-9]+$/i)){
 		async.waterfall([		
 			function(callback) {
+				var workerLimit = 8;
 				var workers = [];
 				var files = fs.readdirSync("./spec/testresources");
-				var numOfWorkers = files.length;
+				var numOfWorkers = files.length>workerLimit?workerLimit:files.length;
 				var exit = function() {
 			      numOfWorkers--;
 			      if (numOfWorkers == 0) {
@@ -47,28 +48,34 @@ app.get('/scalamr.json', function(req, response) {
 			      }
 			    };
 				
-				files.forEach(function(file) {
-					var worker = new Worker();
-					worker.on('exit', exit);
-				  	worker.on('message', function(msg) {
-				   		result.push(msg);
-				  	});
-				  	
-				  	worker.send(new Array("./spec/testresources/" + file, req.query.q));
-			    	workers.push(worker);
-				});
+				for (var i = 0; i < workerLimit; i++) {
+				  var worker = new Worker();
+				  var filesToSend = new Array();
+				  worker.on('exit', exit);
+				  worker.on('message', function(msg) {
+				   	result.push(msg);
+				  });
+				  for(var j=0;j<parseInt(files.length/workerLimit)+1;j++) {
+				  	if(parseInt(i*files.length/workerLimit) + j < files.length) {
+						filesToSend.push("./spec/testresources/" + files[parseInt(i*files.length/workerLimit) + j]);
+					} else {
+						break;
+					}
+				  }
+				  worker.send(new Array(filesToSend, req.query.q));
+				  workers.push(worker);
+				}
 			}
 			
 			/*
 			function(arryList, callback) {
 			    async.reduce(arryList, {}, function(memo, item, cback) {
-			    console.info(":::::::" + memo);
 			    cback(null, memo + item);
 			    }, callback)
 			  }
 			  */
 		], function(err, result) {
-			  console.log("Result: " + result);
+			  //console.log("Result: " + JSON.stringify(result));
 			  response.json(result);
 		});
 	}

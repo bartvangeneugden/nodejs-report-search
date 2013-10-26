@@ -8,10 +8,13 @@ var ScalaReader = require('/Users/tonchen/dev/git/nodejs-report-search/app/util/
 //msg[2] : transformer
 //msg[3]: searcher
 process.on('message', function(msg) {
-  console.info(process.pid + " : " + msg[0] + " : " + msg[1]);
-  var transformedContent = ScalaReader.getScenario(fs.readFileSync(msg[0], 'utf-8'));
-  if(ScalaReader.scenarioContainsKeyword(transformedContent, msg[1])) {
-  	process.send(transformedContent);
-  }
+  var valuesToReturn = [];
+  msg[0].forEach(function(file) {
+	  var transformedContent = ScalaReader.getScenario(fs.readFileSync(file, 'utf-8'));
+	  if(ScalaReader.scenarioContainsKeyword(transformedContent, msg[1])) {
+	  	valuesToReturn.push(transformedContent);
+	  }
+  });
+  process.send(valuesToReturn);
   process.exit(0);
 })
