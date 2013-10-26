@@ -1,7 +1,21 @@
 doctype 5
-html
-  head
-    title= title
-    link(rel='stylesheet', href='/stylesheets/style.css')
-  body
-    block content
+html(lang='en')
+head
+    meta(charset='utf-8')
+        meta(name='viewport', content='width=device-width, initial-scale=1.0')
+        title Scenario Searcher
+    //
+       Bootstrap core CSS
+    link(href='http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css', rel='stylesheet')
+
+body
+    
+    .container
+        .row
+            .col-md-12
+                h1 Scenario Searcher
+        block content
+
+script(src='http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js').
+script(src='http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js')
+script(src='/js/app.js')

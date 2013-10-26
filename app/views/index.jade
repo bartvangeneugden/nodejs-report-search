@@ -1,5 +1,13 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
+    .row
+        .col-md-12
+            form.form-horizontal
+                .form-group
+                label.col-lg-2.control-label Search
+                .col-lg-10
+                    input.form-control(placeholder='Search Scenarios',id='searchbox')
+    .row    
+        .col-md-8.col-md-offset-3
+            .scenarioContainer
