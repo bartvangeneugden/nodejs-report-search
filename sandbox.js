@@ -141,7 +141,7 @@ app.get('/hello.txt', function(req, res){
 		  },
 	], function(err, result) {
 		  console.log("Result: " + result);
-	})
+	});
 	
 	async.waterfall([
 	    function(callback){
