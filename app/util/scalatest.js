@@ -2,10 +2,10 @@ var fs = require('fs');
 var cheerio = require('cheerio');
 var utils = require('./utils');
 module.exports.getScenario = function(htmlHaystack) {
-	var scenarios = [];
+	var scenario = {};
 	$=cheerio.load(htmlHaystack);
 	$(".specification").each(function(){
-		var scenario = {
+		scenario = {
 			scope: trim($(this).find('.scope').text()),
 			given: trim($(this).find('.test_passed,.test_failed dl dt').text()),
 			steps: []
@@ -13,9 +13,8 @@ module.exports.getScenario = function(htmlHaystack) {
 		$(this).find('.info dl dt').each(function(){
 			scenario.steps.push(trim($(this).text()));
 		});
-		scenarios.push(scenario);
 	});
-	return scenarios;
+	return scenario;
 }
 module.exports.scenarioContainsKeyword = function(scenario, needle) {
 	return utils.objectContains(scenario, needle);
