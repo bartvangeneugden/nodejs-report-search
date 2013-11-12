@@ -15,18 +15,4 @@ describe('jasmine-node', function(){
 		expect(contents).toEqual("HELLO_WORLD");
 	});
 	
-	it("Should return the results of a function applied to all files in a folder", function() {
-		var results = IOHandler.foreachFileIn(
-			"./spec/testresources", 
-			function(contents){
-				var scenario = ScalaReader.getScenario(contents);
-				if(ScalaReader.scenarioContainsKeyword(scenario, "payment")){
-					return scenario;
-				}else{
-					return false;
-				}
-			}
-		);
-	});
-	
 });
