@@ -3,9 +3,9 @@ describe('jasmine-node', function(){
 
 	it("Should export a ScalaTest scenario from a report", function(){
 		var result = ScalaReader.getScenario(testFile);
-		expect(result[0].scope).toEqual("stubbed companyweb");
-		expect(result[0].given).toEqual("should sucessfully book a trip");
-		expect(result[0].steps.length).toEqual(8);
+		expect(result.scope).toEqual("stubbed companyweb");
+		expect(result.given).toEqual("should sucessfully book a trip");
+		expect(result.steps.length).toEqual(8);
 	});
 	
 	it("Should recognize a scenario if it contains a keyword", function(){

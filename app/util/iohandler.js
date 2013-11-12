@@ -2,11 +2,8 @@ var fs = require('fs');
 module.exports.listFiles = function(directoryPath, callback, regexMatch) {
 	regexMatch = typeof regexMatch !== 'undefined' ? regexMatch : /html$/;
 	var result = new Array();
-	fs.readdir(directoryPath, function(err, files) {
-		if(err) throw err;
-    	files = files.filter(function(file) { return file.match(regexMatch); });
-		callback(files)
-	});
+	var files = fs.readdirSync(directoryPath);
+    return files.filter(function(file) { return file.match(regexMatch); });
 }
 
 module.exports.readFile = function(filepath, callback) {
@@ -15,14 +12,14 @@ module.exports.readFile = function(filepath, callback) {
 
 module.exports.foreachFileIn = function(directoryPath, applyFunction, callBack) {
 	var results = new Array();
-	module.exports.listFiles(directoryPath, function(files){
-		for(var i in files){
-			var contents = module.exports.readFile(directoryPath+"/"+files[i]);
-			var result = applyFunction(contents);
-			if(result){
-				results.push(result);
-			}
+	var files = module.exports.listFiles(directoryPath);
+    
+	for(var i in files){
+		var contents = module.exports.readFile(directoryPath+"/"+files[i]);
+		var result = applyFunction(contents);
+		if(result){
+			results.push(result);
 		}
-		callBack(results);
-	});
+	}
+	return results;
 }
