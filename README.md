@@ -1,4 +1,4 @@
-nodejs-report-search
+nodejs-report-search v0.1
 ====================
 
 Do a simple iterative search through scalatest reports for a given string and expose through an API
