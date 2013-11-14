@@ -1,5 +1,6 @@
 var IOHandler = require('../app/util/iohandler.js');
 var ScalaReader = require('../app/util/scalatest.js');
+var utils = require('../app/util/utils');
 
 describe('jasmine-node', function(){
 	it("Should list only HTML files by default", function(){
@@ -15,4 +16,11 @@ describe('jasmine-node', function(){
 		expect(contents).toEqual("HELLO_WORLD");
 	});
 	
+    it("Should lazily create closure read functions for all files in a directory", function(){
+        var dirName = "./spec/testresources/";
+       var contents = IOHandler.readFile(dirName + IOHandler.listFiles(dirName).shift());
+       var firstFileClosure = IOHandler.getFilesInDirectoryClosure(dirName).shift();
+       expect(utils.type(firstFileClosure)).toEqual("function");
+       expect(firstFileClosure()).toEqual(contents);
+    });
 });

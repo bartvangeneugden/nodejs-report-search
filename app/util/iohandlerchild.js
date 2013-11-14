@@ -1,12 +1,12 @@
 var fs = require('fs');
 var cheerio = require('cheerio');
-var utils = require('/Users/tonchen/dev/git/nodejs-report-search/app/util/utils.js');
-var ScalaReader = require('/Users/tonchen/dev/git/nodejs-report-search/app/util/scalatest.js');
+var utils = require('./utils');
+var ScalaReader = require('./scalatest');
 
 //msg[0] : filename
 //msg[1] : keyword to search
 //msg[2] : transformer
-//msg[3]: searcher
+//msg[3] : searcher
 process.on('message', function(msg) {
   var valuesToReturn = [];
   msg[0].forEach(function(file) {

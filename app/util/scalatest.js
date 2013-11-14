@@ -1,4 +1,3 @@
-var fs = require('fs');
 var cheerio = require('cheerio');
 var utils = require('./utils');
 module.exports.getScenario = function(htmlHaystack) {

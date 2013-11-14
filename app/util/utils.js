@@ -10,7 +10,7 @@ module.exports.containsString = function(haystack, needle) {
 function objectContains(object, needle) {
 	for(var propt in object) {
 		if (object.hasOwnProperty(propt)) {
-			if(type(object[propt]) == 'array' || type(object[propt]) == 'object'){
+			if(module.exports.type(object[propt]) == 'array' || module.exports.type(object[propt]) == 'object'){
 				return objectContains(object[propt], needle);
 			}else if(module.exports.containsString(object[propt], needle)){
 				return true;
@@ -35,6 +35,6 @@ var TYPES = {
 },
 TOSTRING = Object.prototype.toString;
 
-function type(o) {
+module.exports.type = function(o) {
     return TYPES[typeof o] || TYPES[TOSTRING.call(o)] || (o ? 'object' : 'null');
 };
