@@ -8,6 +8,7 @@ Do a simple iterative search through scalatest reports for a given string and ex
 - `npm install`
 - `cd ../`
 - `npm install`
+- 'run with node app'
 
 (you may need to run `npm install jsdom`)
 
